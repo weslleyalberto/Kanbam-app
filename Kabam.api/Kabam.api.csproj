@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Kabam.Infra\Kabam.Infra.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>

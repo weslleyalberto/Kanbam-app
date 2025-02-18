@@ -29,8 +29,7 @@ namespace Kabam.api.Endpoints
                     return Results.Ok(new RegisterResult { Successful = false, Errors = errors });
                 }
 
-                // Opcional: gerar token JWT para o usuário recém-registrado
-                // var token = GenerateTokenService.GenerateJwtToken(user);
+              
 
                 return Results.Ok(new RegisterResult
                 {

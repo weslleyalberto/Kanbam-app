@@ -15,7 +15,7 @@ namespace Kabam.Blazor.Services
         private readonly NavigationManager _navigationManager;
         private readonly HttpClient _httpClient;
         private readonly IJSRuntime _jSRuntime;
-        private static readonly string TokenKey = "authToken";
+       
         public TarefaService(HttpClient httpClient, IJSRuntime jsRuntime,
             NavigationManager navigationManager)
         {
@@ -31,17 +31,7 @@ namespace Kabam.Blazor.Services
                 new StringContent(tarefaContent, System.Text.Encoding.UTF8, "application/json"));
             return response.IsSuccessStatusCode;
 
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            //// Configura a requisição com o token manualmente
-            //var request = new HttpRequestMessage(HttpMethod.Post, "tarefas/add")
-            //{
-            //    Content = JsonContent.Create(tarefa)
-            //};
-            ////Console.Write(token);
-            ////request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            //var response = await _httpClient.SendAsync(request);
-            //return response.IsSuccessStatusCode;
+           
         }
      
         public async Task<List<Tarefa>> GeTarefasAsync()
