@@ -1,0 +1,6 @@
+@Kabam.api_HostAddress = http://localhost:5153
+
+GET {{Kabam.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

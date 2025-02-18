@@ -1,0 +1,48 @@
+﻿@using Kabam.Blazor.Services
+@using Kabam.Blazor.VM
+@using Kabam.Domain
+@inject TarefaService tarefaService
+@page "/listarT"
+<h3>ListTarefas</h3>
+
+<table>
+    <thead>
+        <tr>
+            <td>Data</td>
+            <td>Descrição</td>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ListVMs.Count() > 0)
+        {
+            foreach(var item in ListVMs)
+            {
+                <tr>
+                    <td>
+                        @item.Data.ToString("D")
+                    </td>
+                    <td>
+                        @item.Descricao
+                    </td>
+                    <td>@item.StatusTarefa</td>
+                </tr>
+            }
+
+        }
+        else
+        {
+            <p>Não há listagem</p>
+        }
+
+    </tbody>
+</table>
+@code {
+    private List<Tarefa> ListVMs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListVMs = await tarefaService.ListarTarefas();
+        Console.WriteLine("aqui"+ListVMs[0].Descricao);
+    }
+
+}

@@ -1,0 +1,38 @@
+﻿@using Kabam.Blazor.Services
+@using Kabam.Blazor.VM
+@page "/addTarefa"
+@inject TarefaService TarefaService
+<AuthorizeView>
+    <Authorized>
+        <h3>Adicionar Tarefa</h3>
+
+        <input @bind="novaTarefa.Descricao" placeholder="Digite a descrição" />
+        <input @bind="novaTarefa.Data" type="date" />
+        <select @bind="novaTarefa.StatusTarefa">
+            <option value="0">Pendente</option>
+            <option value="1">Concluído</option>
+        </select>
+        <button @onclick="AdicionarTarefa">Adicionar</button>
+        <!-- Formulário de criação da tarefa aqui -->
+    </Authorized>
+    <NotAuthorized>
+        <h3>Você precisa estar autenticado para acessar esta página.</h3>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private TarefaAddVM novaTarefa = new();
+
+    private async Task AdicionarTarefa()
+    {
+        var sucesso = await TarefaService.AddTarefaAsync(novaTarefa);
+        if (sucesso)
+        {
+            Console.WriteLine("Tarefa adicionada com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Erro ao adicionar a tarefa.");
+        }
+    }
+}

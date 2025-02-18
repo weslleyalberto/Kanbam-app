@@ -1,0 +1,39 @@
+﻿@using Kabam.Blazor.Models
+@using Kabam.Blazor.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+@page "/login"
+<h3>Login</h3>
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+<input @bind="email" placeholder="Email" />
+<input type="password" @bind="password" placeholder="Senha" />
+
+<button @onclick="HandleLogin">Entrar</button>
+<script>
+    console.log(localStorage.getItem("authToken"));
+    </script>
+@code {
+    private string email;
+    private string password;
+    private string errorMessage;
+    private async Task HandleLogin()
+    {
+        var success = await AuthService.Login(new LoginRequest { Email = email, Password = password });
+
+        if (success)
+        {
+           
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Credenciais inválidas.";
+        }
+    }
+
+}
