@@ -1,11 +1,13 @@
 ﻿@using Kabam.Blazor.Services
-@using Kabam.Blazor.VM
+
 @using Kabam.Domain
+@using Microsoft.AspNetCore.Authorization
 @inject TarefaService tarefaService
 @page "/listarT"
+@attribute [Authorize]
 <h3>ListTarefas</h3>
 
-<table>
+<table class="table">
     <thead>
         <tr>
             <td>Data</td>
@@ -24,14 +26,22 @@
                     <td>
                         @item.Descricao
                     </td>
-                    <td>@item.StatusTarefa</td>
+                    <td>
+                        <select disabled @onchange="HandleSelectionChange">
+                            <option value="">Selecione uma opção</option>
+                            @foreach (var selectStatus in ListVMs)
+                            {
+                                <option selected  value="@selectStatus.StatusTarefa">@item.StatusTarefa</option>
+                            }
+                        </select>
+                    </td>
                 </tr>
             }
 
         }
         else
         {
-            <p>Não há listagem</p>
+            <p>Não há tarefas cadastradas</p>
         }
 
     </tbody>
@@ -41,8 +51,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListVMs = await tarefaService.ListarTarefas();
+        ListVMs = await tarefaService.GeTarefasAsync();
         Console.WriteLine("aqui"+ListVMs[0].Descricao);
+    }
+    private void HandleSelectionChange(ChangeEventArgs e)
+    {
+        Console.WriteLine("Selecionado");
     }
 
 }
