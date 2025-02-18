@@ -1,48 +1,74 @@
 ﻿@using Kabam.Blazor.Services
-@using Kabam.Blazor.VM
+
 @using Kabam.Domain
+@using Microsoft.AspNetCore.Authorization
 @inject TarefaService tarefaService
 @page "/listarT"
-<h3>ListTarefas</h3>
+@attribute [Authorize]
+<h3>Lista de Tarefas</h3>
+<div class="container col-md-5">
+    <input type="text" placeholder="Buscar descrição" @bind="searchTerm" @bind:event="oninput" class="form-control" />
+    <button class="btn-danger" @onclick="LimparCampos">Listar</button>
+</div>
 
-<table>
+<table class="table table-striped-columns">
     <thead>
         <tr>
-            <td>Data</td>
-            <td>Descrição</td>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         @if (ListVMs.Count() > 0)
         {
-            foreach(var item in ListVMs)
+            foreach(var item in FilteredList)
             {
                 <tr>
                     <td>
-                        @item.Data.ToString("D")
+                        @item.Data.ToShortDateString()
                     </td>
                     <td>
                         @item.Descricao
                     </td>
-                    <td>@item.StatusTarefa</td>
+                    <td>
+                        <select disabled >
+                            <option value="">Selecione uma opção</option>
+                            @foreach (var selectStatus in ListVMs)
+                            {
+                                <option selected  value="@selectStatus.StatusTarefa">@item.StatusTarefa</option>
+                            }
+                        </select>
+                    </td>
                 </tr>
             }
 
         }
         else
         {
-            <p>Não há listagem</p>
+            <p>Não há tarefas cadastradas</p>
         }
 
     </tbody>
 </table>
 @code {
     private List<Tarefa> ListVMs = new();
+    // Propriedade vinculada ao input de busca
+    private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        ListVMs = await tarefaService.ListarTarefas();
-        Console.WriteLine("aqui"+ListVMs[0].Descricao);
-    }
+        ListVMs = await tarefaService.GeTarefasAsync();
 
+    }
+    private List<Tarefa> FilteredList => string.IsNullOrWhiteSpace(searchTerm)
+        ? ListVMs
+        : ListVMs.Where(t => t.Descricao.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private void LimparCampos()
+    {
+        searchTerm = string.Empty;
+        StateHasChanged();
+
+    }
 }

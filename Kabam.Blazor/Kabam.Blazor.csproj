@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Kabam.Domain\Kabam.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="VM\" />
+  </ItemGroup>
+
 </Project>

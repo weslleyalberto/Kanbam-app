@@ -14,14 +14,15 @@ namespace Kabam.api.Service
         public static string GenerateJwtToken(User user)
         {
 
-            var secretKey = "d3854a41-b72d-4fb4-b418-189aeeaeafaed3854a41-b72d-4fb4-b418-189aeeaeafae";
+            var secretKey = Secret.Key;
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Name, user.Id)
+            new Claim(ClaimTypes.Name, user.Id),
+            new Claim(ClaimTypes.NameIdentifier, user.Email)
         };
 
             var token = new JwtSecurityToken(
