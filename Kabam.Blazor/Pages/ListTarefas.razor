@@ -5,29 +5,34 @@
 @inject TarefaService tarefaService
 @page "/listarT"
 @attribute [Authorize]
-<h3>ListTarefas</h3>
+<h3>Lista de Tarefas</h3>
+<div class="container col-md-5">
+    <input type="text" placeholder="Buscar descrição" @bind="searchTerm" @bind:event="oninput" class="form-control" />
+    <button class="btn-danger" @onclick="LimparCampos">Listar</button>
+</div>
 
-<table class="table">
+<table class="table table-striped-columns">
     <thead>
         <tr>
-            <td>Data</td>
-            <td>Descrição</td>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         @if (ListVMs.Count() > 0)
         {
-            foreach(var item in ListVMs)
+            foreach(var item in FilteredList)
             {
                 <tr>
                     <td>
-                        @item.Data.ToString("D")
+                        @item.Data.ToShortDateString()
                     </td>
                     <td>
                         @item.Descricao
                     </td>
                     <td>
-                        <select disabled @onchange="HandleSelectionChange">
+                        <select disabled >
                             <option value="">Selecione uma opção</option>
                             @foreach (var selectStatus in ListVMs)
                             {
@@ -48,15 +53,22 @@
 </table>
 @code {
     private List<Tarefa> ListVMs = new();
+    // Propriedade vinculada ao input de busca
+    private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         ListVMs = await tarefaService.GeTarefasAsync();
-        Console.WriteLine("aqui"+ListVMs[0].Descricao);
-    }
-    private void HandleSelectionChange(ChangeEventArgs e)
-    {
-        Console.WriteLine("Selecionado");
-    }
 
+    }
+    private List<Tarefa> FilteredList => string.IsNullOrWhiteSpace(searchTerm)
+        ? ListVMs
+        : ListVMs.Where(t => t.Descricao.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private void LimparCampos()
+    {
+        searchTerm = string.Empty;
+        StateHasChanged();
+
+    }
 }
