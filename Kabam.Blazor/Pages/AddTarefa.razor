@@ -1,38 +1,37 @@
 ﻿@using Kabam.Blazor.Services
-@using Kabam.Blazor.VM
+
+@using Kabam.Domain
+@using Microsoft.AspNetCore.Authorization
 @page "/addTarefa"
+@attribute [Authorize]
 @inject TarefaService TarefaService
-<AuthorizeView>
-    <Authorized>
-        <h3>Adicionar Tarefa</h3>
+@inject NavigationManager NavigationManager
 
-        <input @bind="novaTarefa.Descricao" placeholder="Digite a descrição" />
-        <input @bind="novaTarefa.Data" type="date" />
-        <select @bind="novaTarefa.StatusTarefa">
-            <option value="0">Pendente</option>
-            <option value="1">Concluído</option>
-        </select>
-        <button @onclick="AdicionarTarefa">Adicionar</button>
-        <!-- Formulário de criação da tarefa aqui -->
-    </Authorized>
-    <NotAuthorized>
-        <h3>Você precisa estar autenticado para acessar esta página.</h3>
-    </NotAuthorized>
-</AuthorizeView>
+<h3>Adicionar Tarefa</h3>
 
+<input @bind="novaTarefa.Descricao" placeholder="Digite a descrição" />
+<input @bind="novaTarefa.Data" type="date" />
+<select>
+    @foreach (var item in Enum.GetValues(typeof(StatusTarefaEnum)))
+    {
+        <option value="@item">@item</option>
+    }
+
+</select>
+<button @onclick="AdicionarTarefa">Adicionar</button>
+<!-- Formulário de criação da tarefa aqui -->
+@if (isAdd)
+{
+    <p class="btn btn-success">Tarefa Adicionada com sucesso!</p>
+}
 @code {
-    private TarefaAddVM novaTarefa = new();
-
+    private Tarefa novaTarefa = new();
+    bool isAdd;
     private async Task AdicionarTarefa()
     {
-        var sucesso = await TarefaService.AddTarefaAsync(novaTarefa);
-        if (sucesso)
-        {
-            Console.WriteLine("Tarefa adicionada com sucesso!");
-        }
-        else
-        {
-            Console.WriteLine("Erro ao adicionar a tarefa.");
-        }
+        isAdd = await TarefaService.AddTarefaAsync(novaTarefa);
+        NavigationManager.NavigateTo("/listarT", true);
+
     }
+
 }

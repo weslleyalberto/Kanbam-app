@@ -1,39 +1,60 @@
-﻿@using Kabam.Blazor.Models
+﻿@page "/login"
 @using Kabam.Blazor.Services
-@inject AuthService AuthService
-@inject NavigationManager Navigation
+@using Kabam.Domain
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+<h1>Login</h1>
 
-@page "/login"
-<h3>Login</h3>
-@if (errorMessage != null)
+@if (ShowErrors)
 {
-    <p style="color:red">@errorMessage</p>
+    <div class="alert alert-danger" role="alert">
+        <p>@Error</p>
+    </div>
 }
 
-<input @bind="email" placeholder="Email" />
-<input type="password" @bind="password" placeholder="Senha" />
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-<button @onclick="HandleLogin">Entrar</button>
-<script>
-    console.log(localStorage.getItem("authToken"));
-    </script>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" Class="form-control"
+                           @bind-Value="loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </div>
+</div>
+
 @code {
-    private string email;
-    private string password;
-    private string errorMessage;
+
+    private LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error = "";
+
     private async Task HandleLogin()
     {
-        var success = await AuthService.Login(new LoginRequest { Email = email, Password = password });
+        ShowErrors = false;
 
-        if (success)
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
         {
-           
-            Navigation.NavigateTo("/");
+            NavigationManager.NavigateTo("/");
         }
         else
         {
-            errorMessage = "Credenciais inválidas.";
+            Error = result.Error;
+            ShowErrors = true;
         }
     }
-
 }
